@@ -1,3 +1,101 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* 가로 스크롤 방지 */
+html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+  
+  * {
+    box-sizing: border-box;
+  }
+/* 전체 레이아웃 최대 너비 제한 (매우 큰 화면에서만) */
+@media (min-width: 1920px) {
+  .main-content-layout {
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+}
+
+/* 반응형 레이아웃 스타일 */
+.main-content-layout {
+  flex-wrap: wrap;
+}
+
+/* 데스크탑: 1200px 이상 */
+@media (min-width: 1200px) {
+  .main-content-layout {
+    flex-direction: row !important;
+  }
+}
+
+/* 태블릿/작은 데스크탑: 1200px 미만 */
+@media (max-width: 1200px) {
+  .main-content-layout {
+    flex-direction: column !important;
+  }
+  
+  .sidebar {
+    width: 100% !important;
+    min-width: unset !important;
+  }
+  
+  .main-content {
+    min-width: unset !important;
+    width: 100% !important;
+  }
+}
+
+/* 공동구매 그리드 반응형 */
+.group-purchase-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)) !important;
+}
+
+/* 태블릿: 768px - 1024px */
+@media (min-width: 768px) and (max-width: 1024px) {
+  .group-purchase-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* 모바일: 768px 미만 */
+@media (max-width: 768px) {
+  .group-purchase-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* 커뮤니티 피드 그리드 반응형 */
+.community-feed-grid {
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)) !important;
+}
+
+/* 큰 화면: 1400px 이상 */
+@media (min-width: 1400px) {
+  .community-feed-grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* 중간 화면: 1024px - 1400px */
+@media (min-width: 1024px) and (max-width: 1399px) {
+  .community-feed-grid {
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+}
+
+/* 태블릿: 768px - 1024px */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .community-feed-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* 모바일: 768px 미만 */
+@media (max-width: 768px) {
+  .community-feed-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
