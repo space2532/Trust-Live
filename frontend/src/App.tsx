@@ -79,9 +79,9 @@ export default function App() {
   return (
     <LanguageProvider>
       <div className="bg-background min-h-screen">
-        <div className="block lg:hidden">{renderMobileContent()}</div>
+        <div className="block md:hidden">{renderMobileContent()}</div>
 
-        <div className="hidden lg:block">
+        <div className="hidden md:block">
           <DesktopNav activeTab={activeTab} onTabChange={setActiveTab} />
           {renderDesktopContent()}
         </div>

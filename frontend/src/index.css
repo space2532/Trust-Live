@@ -79,12 +79,12 @@
   display: block !important;
 }
 
-@media (min-width: 1024px) {
-  .lg\:hidden {
+@media (min-width: 768px) {
+  .md\:hidden {
     display: none !important;
   }
 
-  .lg\:block {
+  .md\:block {
     display: block !important;
   }
 }
