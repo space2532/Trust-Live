@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react';
 import type { Dispatch, ReactNode, SetStateAction } from 'react';
-import { TrendingUp, Users, Home as HomeIcon, ShoppingCart } from 'lucide-react';
+import { TrendingUp, Users, Home as HomeIcon, ShoppingCart, UserX } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 export interface CommunityPost {
@@ -19,6 +19,7 @@ export interface CommunityPost {
   comments: number;
   timeAgo: string;
   categoryColor: string;
+  isAnonymous?: boolean;
 }
 
 interface CommunityContextValue {
@@ -55,6 +56,7 @@ export function CommunityProvider({ children }: { children: ReactNode }) {
       { id: 'roommates', name: language === 'ko' ? '룸메이트' : 'Roommates', icon: Users, color: 'text-primary' },
       { id: 'housing', name: language === 'ko' ? '주거' : 'Housing', icon: HomeIcon, color: 'text-blue-500' },
       { id: 'marketplace', name: language === 'ko' ? '마켓' : 'Marketplace', icon: ShoppingCart, color: 'text-orange-500' },
+      { id: 'anonymous', name: language === 'ko' ? '익명게시판' : 'Anonymous', icon: UserX, color: 'text-purple-500' },
     ],
     [language],
   );
@@ -177,6 +179,66 @@ export function CommunityProvider({ children }: { children: ReactNode }) {
         timeAgo: language === 'ko' ? '4일 전' : '4d ago',
         categoryColor: 'bg-secondary',
       },
+      {
+        id: 7,
+        author: {
+          name: language === 'ko' ? '익명' : 'Anonymous',
+          avatar: 'https://ui-avatars.com/api/?name=Anonymous&background=9f7aea&color=fff',
+          verified: false,
+        },
+        categoryId: 'anonymous',
+        category: language === 'ko' ? '익명게시판' : 'Anonymous Board',
+        title: language === 'ko' ? '룸메이트 때문에 스트레스 받는 사람 있나요?' : 'Anyone else stressed about their roommate?',
+        content:
+          language === 'ko'
+            ? '솔직히 말하기 어렵지만... 룸메이트가 너무 시끄럽고 깔끔하지 않아서 힘들어요. 어떻게 대화를 시작해야 할지 모르겠네요. 조언 부탁드려요.'
+            : "It's hard to be honest, but... my roommate is too loud and messy, and it's really stressful. I don't know how to start a conversation about it. Any advice?",
+        likes: 89,
+        comments: 45,
+        timeAgo: language === 'ko' ? '1시간 전' : '1h ago',
+        categoryColor: 'bg-purple-500',
+        isAnonymous: true,
+      },
+      {
+        id: 8,
+        author: {
+          name: language === 'ko' ? '익명' : 'Anonymous',
+          avatar: 'https://ui-avatars.com/api/?name=Anonymous&background=9f7aea&color=fff',
+          verified: false,
+        },
+        categoryId: 'anonymous',
+        category: language === 'ko' ? '익명게시판' : 'Anonymous Board',
+        title: language === 'ko' ? '대학생활 고민 상담' : 'College life concerns',
+        content:
+          language === 'ko'
+            ? '친구들한테 말하기 부끄러워서 여기 올려요. 요즘 너무 외로워요. 같은 기숙사에 사는데도 사람들과 친해지기가 어려워요. 혼자만 이런 건가요?'
+            : "Too embarrassed to tell my friends, so posting here. I've been feeling really lonely lately. Even though I live in the same dorm, it's hard to make friends. Am I the only one?",
+        likes: 156,
+        comments: 78,
+        timeAgo: language === 'ko' ? '3시간 전' : '3h ago',
+        categoryColor: 'bg-purple-500',
+        isAnonymous: true,
+      },
+      {
+        id: 9,
+        author: {
+          name: language === 'ko' ? '익명' : 'Anonymous',
+          avatar: 'https://ui-avatars.com/api/?name=Anonymous&background=9f7aea&color=fff',
+          verified: false,
+        },
+        categoryId: 'anonymous',
+        category: language === 'ko' ? '익명게시판' : 'Anonymous Board',
+        title: language === 'ko' ? '알바 구하는 게 너무 힘들어요' : 'Finding part-time jobs is so hard',
+        content:
+          language === 'ko'
+            ? '학생인데 알바 구하기가 정말 어렵네요. 면접도 계속 떨어지고... 같은 경험 있으신 분들 조언 부탁드려요. 어떻게 하면 좋을까요?'
+            : "I'm a student and finding part-time jobs is really difficult. I keep failing interviews... Anyone with similar experiences, please give advice. What should I do?",
+        likes: 67,
+        comments: 32,
+        timeAgo: language === 'ko' ? '6시간 전' : '6h ago',
+        categoryColor: 'bg-purple-500',
+        isAnonymous: true,
+      },
     ],
     [language],
   );
@@ -203,7 +265,7 @@ export function CommunityProvider({ children }: { children: ReactNode }) {
 
   const filteredPosts = useMemo(() => {
     if (selectedCategory === 'all') {
-      return posts;
+      return posts.filter((post) => post.categoryId !== 'anonymous');
     }
     return posts.filter((post) => post.categoryId === selectedCategory);
   }, [posts, selectedCategory]);

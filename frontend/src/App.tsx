@@ -15,6 +15,7 @@ import { MarketHomeDesktop } from './components/MarketHomeDesktop';
 import { ProductDetailDesktop } from './components/ProductDetailDesktop';
 import { MyPageDesktop } from './components/MyPageDesktop';
 import { CommunityDesktop } from './components/CommunityDesktop';
+import { DormNoticeScreen } from './components/DormNoticeScreen';
 import { LanguageProvider } from './contexts/LanguageContext';
 import { UserProvider } from './hooks/useUser';
 import { MarketProvider } from './hooks/useMarket';
@@ -25,11 +26,13 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showLifestyleInput, setShowLifestyleInput] = useState(false);
   const [showProductDetail, setShowProductDetail] = useState(false);
+  const [showDormNotices, setShowDormNotices] = useState(false);
 
   const resetOverlays = () => {
     setShowSettings(false);
     setShowLifestyleInput(false);
     setShowProductDetail(false);
+    setShowDormNotices(false);
   };
 
   const handleTabChange = (tab: string) => {
@@ -42,6 +45,10 @@ export default function App() {
   const openDealDetail = () => {
     handleTabChange('market');
     setShowProductDetail(true);
+  };
+  const openDormNotices = () => {
+    handleTabChange('home');
+    setShowDormNotices(true);
   };
   const renderDesktopContent = () => {
     if (showSettings) {
@@ -56,6 +63,10 @@ export default function App() {
       return <ProductDetailDesktop onBack={() => setShowProductDetail(false)} />;
     }
 
+    if (showDormNotices) {
+      return <DormNoticeScreen onBack={() => setShowDormNotices(false)} />;
+    }
+
     return (
       <>
         {activeTab === 'home' && (
@@ -63,6 +74,7 @@ export default function App() {
             onViewAllDeals={navigateToMarket}
             onJoinDeal={openDealDetail}
             onViewCommunity={navigateToCommunity}
+            onViewAllNotices={openDormNotices}
           />
         )}
         {activeTab === 'matching' && (
@@ -88,6 +100,10 @@ export default function App() {
       return <ProductDetailScreen onBack={() => setShowProductDetail(false)} />;
     }
 
+    if (showDormNotices) {
+      return <DormNoticeScreen onBack={() => setShowDormNotices(false)} />;
+    }
+
     return (
       <>
         {activeTab === 'home' && (
@@ -95,6 +111,7 @@ export default function App() {
             onViewAllDeals={navigateToMarket}
             onJoinDeal={openDealDetail}
             onViewCommunity={navigateToCommunity}
+            onViewAllNotices={openDormNotices}
           />
         )}
         {activeTab === 'matching' && (

@@ -1,7 +1,9 @@
-import { Bell, Users, Clock, ArrowRight, Heart, MessageCircle } from 'lucide-react';
+import { Bell, Users, Clock, ArrowRight, Heart, MessageCircle, Megaphone, Shield, Sparkles, CheckCircle2 } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useState } from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { RoommateCardCompact } from './RoommateCardCompact';
+import { RoommateDetailModal } from './RoommateDetailModal';
 import { useDashboardLogic } from '../hooks/useDashboardLogic';
 import { useUser } from '../hooks/useUser';
 
@@ -9,19 +11,27 @@ interface DashboardDesktopProps {
   onViewAllDeals: () => void;
   onJoinDeal: () => void;
   onViewCommunity: () => void;
+  onViewAllNotices: () => void;
 }
 
-export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }: DashboardDesktopProps) {
+export function DashboardDesktop({
+  onViewAllDeals,
+  onJoinDeal,
+  onViewCommunity,
+  onViewAllNotices,
+}: DashboardDesktopProps) {
   const {
     t,
     language,
     roommates,
     groupBuyDeals,
     communityPosts,
+    dormNotices,
     selectedRoommateId,
     setSelectedRoommateId,
   } = useDashboardLogic();
   const { user } = useUser();
+  const [showRoommateDetail, setShowRoommateDetail] = useState(false);
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen">
@@ -33,22 +43,35 @@ export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-3xl shadow-lg border border-border p-8"
+              className="bg-gradient-to-br from-primary/10 via-blue-50 to-purple-50 rounded-3xl shadow-lg border-2 border-primary/20 p-8 relative"
             >
               <div className="flex items-start justify-between mb-6">
-                <div className="flex items-center gap-4">
-                  <ImageWithFallback
-                    src={user.avatar}
-                    alt={user.name}
-                    className="w-20 h-20 rounded-full object-cover border-4 border-primary/20"
-                  />
-                  <div>
-                    <h2 className="text-foreground mb-1">{user.name}</h2>
-                    <p className="text-sm text-muted-foreground mb-2">{user.university}</p>
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 bg-secondary/20 text-secondary rounded-full text-xs">
-                        {language === 'ko' ? `신뢰점수: ${user.trustScore}` : `Trust Score: ${user.trustScore}`}
-                      </span>
+                <div className="flex items-start gap-4 flex-1">
+                  {/* Avatar */}
+                  <div className="relative">
+                    <ImageWithFallback
+                      src={user.avatar}
+                      alt={user.name}
+                      className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
+                    />
+                    <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-secondary rounded-full border-2 border-white flex items-center justify-center">
+                      <CheckCircle2 className="w-5 h-5 text-white" />
+                    </div>
+                  </div>
+
+                  {/* User Info */}
+                  <div className="flex-1">
+                    <h2 className="text-foreground mb-2">{user.name}</h2>
+                    
+                    {/* Verified Badge */}
+                    <div className="inline-flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1 rounded-full mb-3">
+                      <CheckCircle2 className="w-3 h-3" />
+                      <span className="text-xs">{language === 'ko' ? '인증된 대학생' : 'Verified University Student'}</span>
+                    </div>
+                    
+                    <div className="space-y-0.5">
+                      <p className="text-sm text-foreground">{user.university}</p>
+                      <p className="text-xs text-muted-foreground">{`${user.major} • ${language === 'ko' ? `${user.year}학년` : user.year === 1 ? 'Freshman' : user.year === 2 ? 'Sophomore' : user.year === 3 ? 'Junior' : 'Senior'}`}</p>
                     </div>
                   </div>
                 </div>
@@ -58,18 +81,40 @@ export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }
                 </button>
               </div>
 
-              <div className="grid grid-cols-3 gap-4 pt-6 border-t border-border">
-                <div className="text-center">
-                  <p className="text-2xl text-primary mb-1">{user.trustScore}</p>
-                  <p className="text-xs text-muted-foreground">{language === 'ko' ? '신뢰도' : 'Trust Score'}</p>
+              {/* Quick Stats */}
+              <div className="grid grid-cols-3 gap-3 bg-white/60 backdrop-blur rounded-2xl p-4">
+                {/* Trust Score */}
+                <div className="flex flex-col items-center justify-center text-center rounded-xl bg-primary/5 px-3 py-2 min-w-0">
+                  <p className="text-2xl text-primary mb-0.5">{user.trustScore}</p>
+                  <p className="text-xs text-muted-foreground break-keep">
+                    {language === 'ko' ? '신뢰점수' : 'Trust Score'}
+                  </p>
                 </div>
-                <div className="text-center">
-                  <p className="text-2xl text-foreground mb-1">{user.dealsJoined}</p>
-                  <p className="text-xs text-muted-foreground">{language === 'ko' ? '딜 참여' : 'Deals Joined'}</p>
+
+                {/* Trait 1 */}
+                <div className="flex flex-col items-center justify-center text-center rounded-xl bg-secondary/10 px-3 py-2 min-w-0">
+                  <div className="flex items-center gap-1 min-w-0">
+                    <Sparkles className="w-4 h-4 text-secondary shrink-0" />
+                    <p
+                      className="text-sm text-foreground truncate max-w-[110px]"
+                      title={language === 'ko' ? '아침형 인간' : 'Morning Person'}
+                    >
+                      {language === 'ko' ? '아침형 인간' : 'Morning Person'}
+                    </p>
+                  </div>
                 </div>
-                <div className="text-center">
-                  <p className="text-2xl text-secondary mb-1">₩{user.amountSaved.toLocaleString()}</p>
-                  <p className="text-xs text-muted-foreground">{language === 'ko' ? '절약액' : 'Saved'}</p>
+
+                {/* Trait 2 */}
+                <div className="flex flex-col items-center justify-center text-center rounded-xl bg-emerald-50 px-3 py-2 min-w-0">
+                  <div className="flex items-center gap-1 min-w-0">
+                    <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <p
+                      className="text-sm text-emerald-700 truncate max-w-[110px]"
+                      title={language === 'ko' ? '깔끔 대장' : 'Super Tidy'}
+                    >
+                      {language === 'ko' ? '깔끔 대장' : 'Super Tidy'}
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -114,6 +159,7 @@ export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }
                     matchPercentage={roommate.matchPercentage}
                     status={roommate.status}
                     sharedInterests={roommate.sharedInterests}
+                    onViewDetails={() => setShowRoommateDetail(true)}
                   />
                 ))}
             </motion.div>
@@ -121,22 +167,44 @@ export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }
 
           {/* Right Column - Deals & Activity */}
           <div className="col-span-8 space-y-6">
-            {/* Living Tip */}
+            {/* Dorm Notices */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="bg-gradient-to-br from-secondary/10 to-emerald-50 rounded-3xl p-8 border-2 border-secondary/30"
+              className="bg-white rounded-3xl p-8 border border-border shadow-lg"
             >
-              <div className="flex items-center gap-4">
-                <span className="text-5xl flex-shrink-0">💡</span>
-                <div>
-                  <p className="text-foreground mb-1">
-                    {t('dashboard.livingTip')}
-                  </p>
-                  <p className="text-muted-foreground">
-                    {t('dashboard.tipMessage')}
-                  </p>
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <Megaphone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p className="text-xl text-foreground mb-1">{t('dashboard.dormNotice')}</p>
+                    <p className="text-sm text-muted-foreground">{t('dashboard.noticeSubtitle')}</p>
+                  </div>
                 </div>
+                <button
+                  className="text-sm text-primary hover:underline"
+                  onClick={onViewAllNotices}
+                >
+                  {language === 'ko' ? '전체 보기' : 'View all'}
+                </button>
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                {dormNotices.map((notice) => (
+                  <div key={notice.id} className="rounded-2xl border border-border/70 p-4 bg-muted/20">
+                    <div className="flex items-center justify-between mb-2">
+                      <p className="text-sm font-semibold text-foreground pr-2">{notice.title}</p>
+                      <span className="text-[11px] px-2 py-0.5 rounded-full bg-secondary/15 text-secondary">
+                        {notice.status}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">{notice.description}</p>
+                    <div className="flex items-center justify-between text-[11px] text-muted-foreground">
+                      <span>{notice.date}</span>
+                    </div>
+                  </div>
+                ))}
               </div>
             </motion.div>
 
@@ -250,12 +318,14 @@ export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }
                   <div className="relative w-12 aspect-square">
                     <ImageWithFallback
                       src={post.author.avatar}
-                      alt={post.author.name}
+                      alt={post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
                       className="w-full h-full rounded-full object-cover"
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground truncate">{post.author.name}</p>
+                    <p className="text-sm text-foreground truncate">
+                      {post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
+                    </p>
                     <p className="text-xs text-muted-foreground">{post.timeAgo}</p>
                   </div>
                 </div>
@@ -282,6 +352,27 @@ export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }
           </div>
         </motion.div>
       </div>
+
+      {/* Roommate Detail Modal */}
+      {roommates
+        .filter((r) => r.id === selectedRoommateId)
+        .map((roommate) => (
+          <RoommateDetailModal
+            key={roommate.id}
+            isOpen={showRoommateDetail}
+            onClose={() => setShowRoommateDetail(false)}
+            name={roommate.name}
+            avatar={roommate.avatar}
+            university={roommate.university}
+            major={roommate.major}
+            year={roommate.year}
+            bio={roommate.bio}
+            likes={roommate.likes}
+            dislikes={roommate.dislikes}
+            reputation={roommate.reputation}
+            recentReviews={roommate.recentReviews}
+          />
+        ))}
     </div>
   );
 }

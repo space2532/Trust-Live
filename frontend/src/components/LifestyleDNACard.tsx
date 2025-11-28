@@ -1,13 +1,24 @@
 import { Radar, RadarChart, PolarGrid, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 import { Eye } from 'lucide-react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 export function LifestyleDNACard() {
+  const { language } = useLanguage();
+  
+  const categoryLabels = {
+    sleep: language === 'ko' ? '수면' : 'Sleep',
+    clean: language === 'ko' ? '청결' : 'Clean',
+    social: language === 'ko' ? '사교' : 'Social',
+    quiet: language === 'ko' ? '조용함' : 'Quiet',
+    share: language === 'ko' ? '공유' : 'Share',
+  };
+
   const data = [
-    { category: 'Sleep', value: 90 },
-    { category: 'Clean', value: 85 },
-    { category: 'Social', value: 60 },
-    { category: 'Quiet', value: 80 },
-    { category: 'Share', value: 75 },
+    { category: categoryLabels.sleep, value: 90 },
+    { category: categoryLabels.clean, value: 85 },
+    { category: categoryLabels.social, value: 60 },
+    { category: categoryLabels.quiet, value: 80 },
+    { category: categoryLabels.share, value: 75 },
   ];
 
   return (
@@ -15,7 +26,7 @@ export function LifestyleDNACard() {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <span className="text-xl">🧬</span>
-          <h3 className="text-foreground">My Lifestyle DNA</h3>
+          <h3 className="text-foreground">{language === 'ko' ? '내 라이프스타일 DNA' : 'My Lifestyle DNA'}</h3>
         </div>
         <button className="p-2 hover:bg-white/50 rounded-full transition-colors">
           <Eye className="w-4 h-4 text-primary" />

@@ -1,6 +1,8 @@
+import React from 'react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { MessageCircle } from 'lucide-react';
+import { MessageCircle, Eye } from 'lucide-react';
 import { MatchCircle } from './MatchCircle';
+import { useLanguage } from '../contexts/LanguageContext';
 
 interface RoommateCardCompactProps {
   name: string;
@@ -8,11 +10,23 @@ interface RoommateCardCompactProps {
   matchPercentage: number;
   status?: string;
   sharedInterests: string[];
+  className?: string;
+  onViewDetails?: () => void;
 }
 
-export function RoommateCardCompact({ name, avatar, matchPercentage, status = 'Active', sharedInterests }: RoommateCardCompactProps) {
+export function RoommateCardCompact({
+  name,
+  avatar,
+  matchPercentage,
+  status = 'Active',
+  sharedInterests,
+  className = '',
+  onViewDetails,
+}: RoommateCardCompactProps) {
+  const { language } = useLanguage();
+
   return (
-    <div className="bg-white rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-4 flex-shrink-0">
+    <div className={`bg-white rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] p-4 flex-shrink-0 w-[240px] ${className}`}>
       {/* Header with Profile */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
@@ -37,11 +51,22 @@ export function RoommateCardCompact({ name, avatar, matchPercentage, status = 'A
         ))}
       </div>
 
-      {/* CTA */}
-      <button className="w-full bg-primary text-primary-foreground px-3 py-2 rounded-[12px] flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors text-sm">
-        <MessageCircle className="w-4 h-4" />
-        <span>Message</span>
-      </button>
+      {/* CTA Buttons */}
+      <div className="flex flex-col gap-2">
+        {onViewDetails && (
+          <button
+            onClick={onViewDetails}
+            className="w-full bg-secondary/10 text-foreground px-3 py-2 rounded-[12px] flex items-center justify-center gap-2 hover:bg-secondary/20 transition-colors text-sm"
+          >
+            <Eye className="w-4 h-4" />
+            <span>{language === 'ko' ? '상세보기' : 'View Details'}</span>
+          </button>
+        )}
+        <button className="w-full bg-primary text-primary-foreground px-3 py-2 rounded-[12px] flex items-center justify-center gap-2 hover:bg-primary/90 transition-colors text-sm">
+          <MessageCircle className="w-4 h-4" />
+          <span>{language === 'ko' ? '메시지' : 'Message'}</span>
+        </button>
+      </div>
     </div>
   );
 }

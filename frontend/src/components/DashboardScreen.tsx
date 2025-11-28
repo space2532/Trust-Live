@@ -1,6 +1,8 @@
-import { Bell, Heart, MessageCircle } from 'lucide-react';
+import { Bell, Heart, MessageCircle, Megaphone } from 'lucide-react';
+import { useState } from 'react';
 import { ProfileHeader } from './ProfileHeader';
 import { RoommateCardCompact } from './RoommateCardCompact';
+import { RoommateDetailModal } from './RoommateDetailModal';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useDashboardLogic } from '../hooks/useDashboardLogic';
 import { useUser } from '../hooks/useUser';
@@ -9,11 +11,27 @@ interface DashboardScreenProps {
   onViewAllDeals: () => void;
   onJoinDeal: () => void;
   onViewCommunity: () => void;
+  onViewAllNotices: () => void;
 }
 
-export function DashboardScreen({ onViewAllDeals, onJoinDeal, onViewCommunity }: DashboardScreenProps) {
-  const { t, language, roommates, groupBuyDeals, communityPosts } = useDashboardLogic();
+export function DashboardScreen({
+  onViewAllDeals,
+  onJoinDeal,
+  onViewCommunity,
+  onViewAllNotices,
+}: DashboardScreenProps) {
+  const {
+    t,
+    language,
+    roommates,
+    groupBuyDeals,
+    communityPosts,
+    dormNotices,
+    selectedRoommateId,
+    setSelectedRoommateId,
+  } = useDashboardLogic();
   const { user } = useUser();
+  const [showRoommateDetail, setShowRoommateDetail] = useState(false);
   const communityPostsForScreen = communityPosts.slice(0, 3);
 
   return (
@@ -34,45 +52,96 @@ export function DashboardScreen({ onViewAllDeals, onJoinDeal, onViewCommunity }:
 
       <main className="pt-4 px-4 max-w-md mx-auto space-y-5 pb-24">
         {/* Profile Header */}
-        <ProfileHeader 
+        <ProfileHeader
           name={user.name}
           university={user.university}
-          compatibilityScore={user.compatibilityScore}
           avatar={user.avatar}
+          trustScore={user.trustScore}
+          trustGrade={language === 'ko' ? '아침형 인간' : 'Morning Person'}
+          mainTrait={language === 'ko' ? '깔끔대장' : 'Super Tidy'}
+          language={language}
         />
 
         {/* My Roommates */}
-        <div>
-          <h2 className="text-foreground mb-3 px-1">{language === 'ko' ? '내 룸메이트' : 'My Roommates'}</h2>
-          
-          {/* Horizontal Scroll */}
-          <div className="overflow-x-auto -mx-4 px-4 pb-2">
-            <div className="flex gap-4" style={{ minWidth: 'min-content' }}>
-              {roommates.map((roommate) => (
-                <div key={roommate.id} style={{ width: '200px' }}>
-                  <RoommateCardCompact
-                    name={roommate.name}
-                    avatar={roommate.avatar}
-                    matchPercentage={roommate.matchPercentage}
-                    status={roommate.status}
-                    sharedInterests={roommate.sharedInterests}
-                  />
-                </div>
-              ))}
+        <div className="bg-white rounded-[20px] p-4 border border-border shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-foreground">{language === 'ko' ? '내 룸메이트' : 'My Roommates'}</h2>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-muted-foreground hidden xs:inline">
+                {language === 'ko' ? `총 ${roommates.length}명` : `${roommates.length} roommates`}
+              </span>
+              <div className="flex items-center gap-1">
+                {roommates.map((roommate) => (
+                  <button
+                    key={roommate.id}
+                    onClick={() => setSelectedRoommateId(roommate.id)}
+                    className={`relative rounded-full transition-all ${
+                      selectedRoommateId === roommate.id
+                        ? 'ring-2 ring-primary ring-offset-1'
+                        : 'opacity-50 hover:opacity-100'
+                    }`}
+                  >
+                    <ImageWithFallback
+                      src={roommate.avatar}
+                      alt={roommate.name}
+                      className="w-8 h-8 rounded-full object-cover"
+                    />
+                  </button>
+                ))}
+              </div>
             </div>
+          </div>
+
+          <div className="mt-2">
+            {roommates
+              .filter((roommate) => roommate.id === selectedRoommateId)
+              .map((roommate) => (
+                <RoommateCardCompact
+                  key={roommate.id}
+                  name={roommate.name}
+                  avatar={roommate.avatar}
+                  matchPercentage={roommate.matchPercentage}
+                  status={roommate.status}
+                  sharedInterests={roommate.sharedInterests}
+                  className="!w-full"
+                  onViewDetails={() => setShowRoommateDetail(true)}
+                />
+              ))}
           </div>
         </div>
 
-        {/* Tips Card */}
-        <div className="bg-gradient-to-br from-secondary/10 to-emerald-50 rounded-[20px] p-4 border-2 border-secondary/30">
-          <div className="flex gap-3">
-            <span className="text-2xl flex-shrink-0">💡</span>
-            <div>
-              <p className="text-sm text-foreground mb-1">{t('dashboard.livingTip')}</p>
-              <p className="text-sm text-muted-foreground">
-                {t('dashboard.tipMessage')}
-              </p>
+        {/* Dorm Notices */}
+        <div className="bg-white rounded-[20px] p-4 border border-border shadow-sm">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                <Megaphone className="w-4 h-4" />
+              </div>
+              <div>
+                <p className="text-sm text-foreground">{t('dashboard.dormNotice')}</p>
+                <p className="text-xs text-muted-foreground">{t('dashboard.noticeSubtitle')}</p>
+              </div>
             </div>
+            <button
+              className="text-[11px] text-primary hover:underline"
+              onClick={onViewAllNotices}
+            >
+              {language === 'ko' ? '전체 보기' : 'View all'}
+            </button>
+          </div>
+          <div className="space-y-3">
+            {dormNotices.slice(0, 2).map((notice) => (
+              <div key={notice.id} className="rounded-2xl bg-muted/40 p-3">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm text-foreground font-medium">{notice.title}</p>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-secondary/20 text-secondary">
+                    {notice.status}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground mb-1">{notice.description}</p>
+                <p className="text-[11px] text-muted-foreground">{notice.date}</p>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -164,11 +233,13 @@ export function DashboardScreen({ onViewAllDeals, onJoinDeal, onViewCommunity }:
                 <div className="flex items-center gap-3 mb-3">
                   <ImageWithFallback
                     src={post.author.avatar}
-                    alt={post.author.name}
+                    alt={post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
                     className="w-10 h-10 rounded-full object-cover"
                   />
                   <div className="flex-1">
-                    <p className="text-sm text-foreground">{post.author.name}</p>
+                    <p className="text-sm text-foreground">
+                      {post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
+                    </p>
                     <p className="text-xs text-muted-foreground">{post.timeAgo}</p>
                   </div>
                   <span className={`${post.categoryColor} text-white px-2 py-1 rounded-full text-xs`}>
@@ -194,6 +265,27 @@ export function DashboardScreen({ onViewAllDeals, onJoinDeal, onViewCommunity }:
           </div>
         </div>
       </main>
+
+      {/* Roommate Detail Modal */}
+      {roommates
+        .filter((r) => r.id === selectedRoommateId)
+        .map((roommate) => (
+          <RoommateDetailModal
+            key={roommate.id}
+            isOpen={showRoommateDetail}
+            onClose={() => setShowRoommateDetail(false)}
+            name={roommate.name}
+            avatar={roommate.avatar}
+            university={roommate.university}
+            major={roommate.major}
+            year={roommate.year}
+            bio={roommate.bio}
+            likes={roommate.likes}
+            dislikes={roommate.dislikes}
+            reputation={roommate.reputation}
+            recentReviews={roommate.recentReviews}
+          />
+        ))}
     </div>
   );
 }

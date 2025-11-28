@@ -33,8 +33,8 @@ const translations = {
     'dashboard.findRoommateDesc': 'AI 기반 매칭',
     'dashboard.localDeals': '지역 특가',
     'dashboard.localDealsDesc': '이웃과 함께 절약',
-    'dashboard.livingTip': '생활 팁',
-    'dashboard.tipMessage': '기숙사 이웃들과 공동구매에 참여하여 돈을 절약하고 커뮤니티를 만드세요!',
+    'dashboard.dormNotice': '기숙사 공지',
+    'dashboard.noticeSubtitle': '중요 안내사항을 미리 확인하세요',
     
     // Roommate Matching
     'matching.title': 'AI 룸메이트 매칭',
@@ -162,8 +162,8 @@ const translations = {
     'dashboard.findRoommateDesc': 'AI-powered matching',
     'dashboard.localDeals': 'Local Deals',
     'dashboard.localDealsDesc': 'Save with neighbors',
-    'dashboard.livingTip': 'Living Tip',
-    'dashboard.tipMessage': 'Join group buys with your dorm neighbors to save money and build community!',
+    'dashboard.dormNotice': 'Dorm Notices',
+    'dashboard.noticeSubtitle': 'Stay on top of campus housing updates',
     
     // Roommate Matching
     'matching.title': 'AI Roommate Matching',

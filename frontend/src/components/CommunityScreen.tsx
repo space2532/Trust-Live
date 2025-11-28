@@ -3,7 +3,7 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useCommunity } from '../hooks/useCommunity';
 
 export function CommunityScreen() {
-  const { t, categories, filteredPosts, selectedCategory, setSelectedCategory } = useCommunity();
+  const { t, language, categories, filteredPosts, selectedCategory, setSelectedCategory } = useCommunity();
 
   return (
     <div className="min-h-screen bg-background">
@@ -54,13 +54,15 @@ export function CommunityScreen() {
               <div className="flex items-center gap-3 mb-3">
                 <ImageWithFallback
                   src={post.author.avatar}
-                  alt={post.author.name}
+                  alt={post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
                   className="w-10 h-10 rounded-full object-cover"
                 />
                 <div className="flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-foreground">{post.author.name}</span>
-                    {post.author.verified && (
+                    <span className="text-sm text-foreground">
+                      {post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
+                    </span>
+                    {!post.isAnonymous && post.author.verified && (
                       <span className="text-xs text-primary">✓</span>
                     )}
                   </div>

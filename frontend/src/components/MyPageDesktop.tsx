@@ -1,13 +1,13 @@
-import { Settings, User, ShoppingBag, TrendingUp, Award, MapPin, Heart, ChevronRight, Edit, Bell, Shield, CreditCard, CheckCircle2 } from 'lucide-react';
+import { Settings, User, ShoppingBag, TrendingUp, Award, MapPin, Heart, ChevronRight, Edit, Bell, Shield, CreditCard, CheckCircle2, Sparkles } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'motion/react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { TrustScoreCard } from './TrustScoreCard';
-import { AchievementBadges } from './AchievementBadges';
 import { LifestyleDNACard } from './LifestyleDNACard';
 import { OrderHistory } from './OrderHistory';
 import { MenuOptions } from './MenuOptions';
 import { useUser } from '../hooks/useUser';
+import { ProfileBioCard } from './ProfileBioCard';
+import { ReputationDetailCard } from './ReputationDetailCard';
 
 interface MyPageDesktopProps {
   onSettingsClick: () => void;
@@ -26,10 +26,10 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen pt-24">
-      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 pb-12">
-        <div className="grid grid-cols-12 gap-8">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 pb-16">
+        <div className="grid grid-cols-12 gap-12">
           {/* Left Column - Profile */}
-          <div className="col-span-4 space-y-6">
+          <div className="col-span-4 flex flex-col" style={{ gap: '44px' }}>
             {/* Profile Card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -73,28 +73,56 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
 
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-3 bg-white/60 backdrop-blur rounded-2xl p-4">
-                <div className="text-center">
-                  <p className="text-2xl text-primary">{user.trustScore}</p>
-                  <p className="text-xs text-muted-foreground">{language === 'ko' ? '신뢰점수' : 'Trust Score'}</p>
-                </div>
-                <div className="text-center border-l border-r border-border">
-                  <p className="text-2xl text-secondary">{user.dealsJoined}</p>
-                  <p className="text-xs text-muted-foreground">{language === 'ko' ? '참여딜' : 'Deals Joined'}</p>
-                </div>
-                <div className="text-center">
-                  <p className="text-2xl text-foreground">
-                    {user.membershipMonths} {language === 'ko' ? '개월' : 'mo'}
+                {/* Trust Score */}
+                <div className="flex flex-col items-center justify-center text-center rounded-xl bg-primary/5 px-3 py-2 min-w-0">
+                  <p className="text-2xl text-primary mb-0.5">{user.trustScore}</p>
+                  <p className="text-xs text-muted-foreground break-keep">
+                    {language === 'ko' ? '신뢰점수' : 'Trust Score'}
                   </p>
-                  <p className="text-xs text-muted-foreground">{language === 'ko' ? '회원' : 'Member'}</p>
+                </div>
+
+                {/* Trait 1 */}
+                <div className="flex flex-col items-center justify-center text-center rounded-xl bg-secondary/10 px-3 py-2 min-w-0">
+                  <div className="flex items-center gap-1 min-w-0">
+                    <Sparkles className="w-4 h-4 text-secondary shrink-0" />
+                    <p
+                      className="text-sm text-foreground truncate max-w-[110px]"
+                      title={language === 'ko' ? '아침형 인간' : 'Morning Person'}
+                    >
+                      {language === 'ko' ? '아침형 인간' : 'Morning Person'}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Trait 2 */}
+                <div className="flex flex-col items-center justify-center text-center rounded-xl bg-emerald-50 px-3 py-2 min-w-0">
+                  <div className="flex items-center gap-1 min-w-0">
+                    <Sparkles className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <p
+                      className="text-sm text-emerald-700 truncate max-w-[110px]"
+                      title={language === 'ko' ? '깔끔 대장' : 'Super Tidy'}
+                    >
+                      {language === 'ko' ? '깔끔 대장' : 'Super Tidy'}
+                    </p>
+                  </div>
                 </div>
               </div>
+            </motion.div>
+
+            {/* Bio / 자기소개 */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+            >
+              <ProfileBioCard bio={user.bio} likes={user.likes} dislikes={user.dislikes} />
             </motion.div>
 
             {/* Menu Options */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: 0.15 }}
             >
               <MenuOptions />
             </motion.div>
@@ -107,27 +135,24 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
           </div>
 
           {/* Right Column - Main Content */}
-          <div className="col-span-8 space-y-6">
-            {/* Trust Score */}
+          <div className="col-span-8 flex flex-col" style={{ gap: '44px' }}>
+            {/* Reputation Details - 상세 평판 */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
+              transition={{ delay: 0.05 }}
             >
-              <TrustScoreCard score={user.trustScore} maxScore={100} />
-            </motion.div>
-
-            {/* Achievement Badges */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-            >
-              <AchievementBadges />
+              <ReputationDetailCard
+                livingManners={user.reputation.manners}
+                communication={user.reputation.communication}
+                payment={user.reputation.payment}
+                maxScore={100}
+                recentReviews={user.recentReviews.map((r) => r.text)}
+              />
             </motion.div>
 
             {/* Order History & Lifestyle DNA - Side by Side */}
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-8">
               {/* Lifestyle DNA */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}

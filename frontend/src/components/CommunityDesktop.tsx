@@ -67,13 +67,15 @@ export function CommunityDesktop() {
                   <div className="flex items-center gap-4 mb-4">
                     <ImageWithFallback
                       src={post.author.avatar}
-                      alt={post.author.name}
+                      alt={post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
                       className="w-14 h-14 rounded-full object-cover border-2 border-primary/20"
                     />
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
-                        <span className="text-foreground">{post.author.name}</span>
-                        {post.author.verified && (
+                        <span className="text-foreground">
+                          {post.isAnonymous ? (language === 'ko' ? '익명' : 'Anonymous') : post.author.name}
+                        </span>
+                        {!post.isAnonymous && post.author.verified && (
                           <span className="w-5 h-5 bg-primary rounded-full flex items-center justify-center">
                             <span className="text-xs text-white">✓</span>
                           </span>
