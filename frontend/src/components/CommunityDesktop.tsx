@@ -9,7 +9,7 @@ export function CommunityDesktop() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50 pt-24">
-      <div className="w-full max-w-[1440px] mx-auto px-8 pb-12">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 pb-12">
         {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">

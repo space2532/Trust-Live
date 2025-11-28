@@ -43,11 +43,13 @@ export function FeedCard({
       </div>
       
       {image && (
-        <ImageWithFallback 
-          src={image} 
-          alt="Post content"
-          className="w-full h-64 object-cover"
-        />
+        <div className="relative aspect-video">
+          <ImageWithFallback 
+            src={image} 
+            alt="Post content"
+            className="w-full h-full object-cover"
+          />
+        </div>
       )}
       
       <div className="p-4 flex items-center justify-between border-t border-border">

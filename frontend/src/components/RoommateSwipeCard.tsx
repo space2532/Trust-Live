@@ -26,11 +26,11 @@ export function RoommateSwipeCard({
   return (
     <div className="bg-white rounded-[20px] shadow-[0_4px_16px_rgba(0,0,0,0.12)] overflow-hidden">
       {/* Photo Section */}
-      <div className="relative">
+      <div className="relative aspect-video">
         <ImageWithFallback 
           src={photo}
           alt={name}
-          className="w-full h-96 object-cover"
+          className="w-full h-full object-cover"
         />
         
         {/* AI Badge */}

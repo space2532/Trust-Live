@@ -122,7 +122,7 @@ export function MarketHomeScreen({ onProductClick }: MarketHomeScreenProps) {
                         </span>
                       </div>
                       <button className="bg-gradient-to-r from-secondary to-emerald-500 text-white text-xs px-4 py-1.5 rounded-full hover:shadow-lg transition-all flex items-center gap-1 group-hover:scale-105" onClick={onProductClick}>
-                        {language === 'ko' ? '참여' : 'Join'}
+                        {language === 'ko' ? '참여하기' : 'Join'}
                         <ChevronRight className="w-3 h-3" />
                       </button>
                     </div>

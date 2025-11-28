@@ -26,11 +26,13 @@ export function RoommateCard({ name, avatar, matchPercentage, moveInDate, shared
       </div>
 
       <div className="flex items-center gap-4 mb-4">
-        <ImageWithFallback 
-          src={avatar}
-          alt={name}
-          className="w-20 h-20 rounded-full object-cover"
-        />
+        <div className="relative w-20 aspect-square">
+          <ImageWithFallback 
+            src={avatar}
+            alt={name}
+            className="w-full h-full rounded-full object-cover"
+          />
+        </div>
         <div className="flex-1">
           <p className="text-foreground mb-1">{name}</p>
           <div className="flex items-center gap-2 text-sm text-muted-foreground mb-2">

@@ -1,4 +1,5 @@
-import { useCallback, useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 
 interface MarketProduct {
@@ -24,7 +25,24 @@ const parseTimeLeftToMinutes = (timeLeft: string) => {
   return hourValue * 60 + minuteValue;
 };
 
-export function useMarket() {
+interface MarketContextValue {
+  language: string;
+  categories: { id: string; label: string }[];
+  sortOptions: { id: string; label: string }[];
+  products: MarketProduct[];
+  displayedProducts: MarketProduct[];
+  selectedCategories: string[];
+  selectedCategory: string;
+  setSelectedCategories: Dispatch<SetStateAction<string[]>>;
+  sortBy: string;
+  setSortBy: Dispatch<SetStateAction<string>>;
+  toggleCategory: (categoryId: string) => void;
+  selectCategory: (categoryId: string) => void;
+}
+
+const MarketContext = createContext<MarketContextValue | undefined>(undefined);
+
+export function MarketProvider({ children }: { children: ReactNode }) {
   const { language } = useLanguage();
   const [selectedCategories, setSelectedCategories] = useState<string[]>(['all']);
   const [sortBy, setSortBy] = useState('popular');
@@ -213,19 +231,46 @@ export function useMarket() {
     setSelectedCategories(categoryId === 'all' ? ['all'] : [categoryId]);
   }, []);
 
-  return {
-    language,
-    categories,
-    sortOptions,
-    products,
-    displayedProducts: sortedProducts,
-    selectedCategories,
-    selectedCategory: selectedCategories[0] ?? 'all',
-    setSelectedCategories,
-    sortBy,
-    setSortBy,
-    toggleCategory,
-    selectCategory,
-  };
+  const value = useMemo<MarketContextValue>(
+    () => ({
+      language,
+      categories,
+      sortOptions,
+      products,
+      displayedProducts: sortedProducts,
+      selectedCategories,
+      selectedCategory: selectedCategories[0] ?? 'all',
+      setSelectedCategories,
+      sortBy,
+      setSortBy,
+      toggleCategory,
+      selectCategory,
+    }),
+    [
+      language,
+      categories,
+      sortOptions,
+      products,
+      sortedProducts,
+      selectedCategories,
+      setSelectedCategories,
+      sortBy,
+      setSortBy,
+      toggleCategory,
+      selectCategory,
+    ],
+  );
+
+  return <MarketContext.Provider value={value}>{children}</MarketContext.Provider>;
+}
+
+export function useMarket() {
+  const context = useContext(MarketContext);
+
+  if (!context) {
+    throw new Error('useMarket must be used within a MarketProvider');
+  }
+
+  return context;
 }
 

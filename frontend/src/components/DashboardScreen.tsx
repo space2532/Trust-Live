@@ -5,7 +5,13 @@ import { ImageWithFallback } from './figma/ImageWithFallback';
 import { useDashboardLogic } from '../hooks/useDashboardLogic';
 import { useUser } from '../hooks/useUser';
 
-export function DashboardScreen() {
+interface DashboardScreenProps {
+  onViewAllDeals: () => void;
+  onJoinDeal: () => void;
+  onViewCommunity: () => void;
+}
+
+export function DashboardScreen({ onViewAllDeals, onJoinDeal, onViewCommunity }: DashboardScreenProps) {
   const { t, language, roommates, groupBuyDeals, communityPosts } = useDashboardLogic();
   const { user } = useUser();
   const communityPostsForScreen = communityPosts.slice(0, 3);
@@ -74,7 +80,9 @@ export function DashboardScreen() {
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
             <h2 className="text-foreground">{t('dashboard.nearbyDeals')}</h2>
-            <button className="text-sm text-primary hover:underline">{t('dashboard.seeAll')}</button>
+            <button className="text-sm text-primary hover:underline" onClick={onViewAllDeals}>
+              {t('dashboard.seeAll')}
+            </button>
           </div>
 
           {/* Horizontal Scroll */}
@@ -128,7 +136,10 @@ export function DashboardScreen() {
                     </div>
 
                     {/* CTA Button */}
-                    <button className="w-full bg-gradient-to-r from-secondary to-emerald-400 text-white py-2 rounded-[12px] text-sm hover:shadow-lg transition-all">
+                    <button
+                      className="w-full bg-gradient-to-r from-secondary to-emerald-400 text-white py-2 rounded-[12px] text-sm hover:shadow-lg transition-all"
+                      onClick={onJoinDeal}
+                    >
                       {t('dashboard.joinDeal')}
                     </button>
                   </div>
@@ -142,7 +153,9 @@ export function DashboardScreen() {
         <div>
           <div className="flex items-center justify-between mb-3 px-1">
             <h2 className="text-foreground">{language === 'ko' ? '커뮤니티 피드' : 'Community Feed'}</h2>
-            <button className="text-sm text-primary hover:underline">{language === 'ko' ? '더보기' : 'See All'}</button>
+            <button className="text-sm text-primary hover:underline" onClick={onViewCommunity}>
+              {language === 'ko' ? '더보기' : 'See All'}
+            </button>
           </div>
 
           <div className="space-y-3">

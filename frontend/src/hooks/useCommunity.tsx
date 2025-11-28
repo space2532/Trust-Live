@@ -1,8 +1,9 @@
-import { useMemo, useState } from 'react';
+import { createContext, useCallback, useContext, useMemo, useState } from 'react';
+import type { Dispatch, ReactNode, SetStateAction } from 'react';
 import { TrendingUp, Users, Home as HomeIcon, ShoppingCart } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
-interface CommunityPost {
+export interface CommunityPost {
   id: number;
   author: {
     name: string;
@@ -20,7 +21,31 @@ interface CommunityPost {
   categoryColor: string;
 }
 
-export function useCommunity() {
+interface CommunityContextValue {
+  t: ReturnType<typeof useLanguage>['t'];
+  language: string;
+  categories: {
+    id: string;
+    name: string;
+    icon: typeof TrendingUp;
+    color: string;
+  }[];
+  posts: CommunityPost[];
+  filteredPosts: CommunityPost[];
+  trendingTopics: { tag: string; count: number }[];
+  stats: {
+    activeUsers: number;
+    postsToday: number;
+    activeGroupBuys: number;
+  };
+  selectedCategory: string;
+  setSelectedCategory: Dispatch<SetStateAction<string>>;
+  addPost: (newPost: CommunityPost) => void;
+}
+
+const CommunityContext = createContext<CommunityContextValue | undefined>(undefined);
+
+export function CommunityProvider({ children }: { children: ReactNode }) {
   const { t, language } = useLanguage();
   const [selectedCategory, setSelectedCategory] = useState('all');
 
@@ -183,16 +208,36 @@ export function useCommunity() {
     return posts.filter((post) => post.categoryId === selectedCategory);
   }, [posts, selectedCategory]);
 
-  return {
-    t,
-    language,
-    categories,
-    posts,
-    filteredPosts,
-    trendingTopics,
-    stats,
-    selectedCategory,
-    setSelectedCategory,
-  };
+  const addPost = useCallback((newPost: CommunityPost) => {
+    // TODO: Integrate API or persistent state.
+    console.warn('addPost is not implemented yet:', newPost);
+  }, []);
+
+  const value = useMemo<CommunityContextValue>(
+    () => ({
+      t,
+      language,
+      categories,
+      posts,
+      filteredPosts,
+      trendingTopics,
+      stats,
+      selectedCategory,
+      setSelectedCategory,
+      addPost,
+    }),
+    [t, language, categories, posts, filteredPosts, trendingTopics, stats, selectedCategory, addPost],
+  );
+
+  return <CommunityContext.Provider value={value}>{children}</CommunityContext.Provider>;
 }
 
+export function useCommunity() {
+  const context = useContext(CommunityContext);
+
+  if (!context) {
+    throw new Error('useCommunity must be used within a CommunityProvider');
+  }
+
+  return context;
+}

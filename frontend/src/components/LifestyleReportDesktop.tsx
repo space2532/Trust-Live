@@ -1,6 +1,7 @@
 import { Sparkles, Moon, Volume2, Users, BookOpen, Coffee, Heart, Edit3, TrendingUp, Award, ChevronRight } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'motion/react';
+import { useUser } from '../hooks/useUser';
 
 interface LifestyleReportDesktopProps {
   onStartInput: () => void;
@@ -22,19 +23,18 @@ interface LifestyleProfile {
 
 export function LifestyleReportDesktop({ onStartInput }: LifestyleReportDesktopProps) {
   const { language } = useLanguage();
+  const { user } = useUser();
   
   const myProfile: LifestyleProfile = {
     name: language === 'ko' ? '나' : 'Me',
     avatar: '👤',
-    overall: 8.2,
-    categories: {
-      sleep: 9,
-      cleanliness: 8,
-      noise: 8,
-      social: 7,
-      study: 9,
-      sharing: 8,
-    },
+    overall: Number(
+      (
+        Object.values(user.lifestyle).reduce((acc, value) => acc + value, 0) /
+        Object.values(user.lifestyle).length
+      ).toFixed(1),
+    ),
+    categories: { ...user.lifestyle },
   };
 
   const roommateProfile: LifestyleProfile = {
@@ -110,7 +110,7 @@ export function LifestyleReportDesktop({ onStartInput }: LifestyleReportDesktopP
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen">
-      <div className="w-full max-w-[1440px] mx-auto px-8 py-8">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 py-8">
         <div className="grid grid-cols-12 gap-8">
           {/* Left Column - Profile Overview */}
           <div className="col-span-4 space-y-6">

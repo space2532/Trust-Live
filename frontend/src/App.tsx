@@ -16,12 +16,33 @@ import { ProductDetailDesktop } from './components/ProductDetailDesktop';
 import { MyPageDesktop } from './components/MyPageDesktop';
 import { CommunityDesktop } from './components/CommunityDesktop';
 import { LanguageProvider } from './contexts/LanguageContext';
+import { UserProvider } from './hooks/useUser';
+import { MarketProvider } from './hooks/useMarket';
+import { CommunityProvider } from './hooks/useCommunity';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [showSettings, setShowSettings] = useState(false);
   const [showLifestyleInput, setShowLifestyleInput] = useState(false);
   const [showProductDetail, setShowProductDetail] = useState(false);
+
+  const resetOverlays = () => {
+    setShowSettings(false);
+    setShowLifestyleInput(false);
+    setShowProductDetail(false);
+  };
+
+  const handleTabChange = (tab: string) => {
+    resetOverlays();
+    setActiveTab(tab);
+  };
+
+  const navigateToMarket = () => handleTabChange('market');
+  const navigateToCommunity = () => handleTabChange('community');
+  const openDealDetail = () => {
+    handleTabChange('market');
+    setShowProductDetail(true);
+  };
   const renderDesktopContent = () => {
     if (showSettings) {
       return <SettingsScreen onBack={() => setShowSettings(false)} />;
@@ -37,7 +58,13 @@ export default function App() {
 
     return (
       <>
-        {activeTab === 'home' && <DashboardDesktop />}
+        {activeTab === 'home' && (
+          <DashboardDesktop
+            onViewAllDeals={navigateToMarket}
+            onJoinDeal={openDealDetail}
+            onViewCommunity={navigateToCommunity}
+          />
+        )}
         {activeTab === 'matching' && (
           <LifestyleReportDesktop onStartInput={() => setShowLifestyleInput(true)} />
         )}
@@ -63,7 +90,13 @@ export default function App() {
 
     return (
       <>
-        {activeTab === 'home' && <DashboardScreen />}
+        {activeTab === 'home' && (
+          <DashboardScreen
+            onViewAllDeals={navigateToMarket}
+            onJoinDeal={openDealDetail}
+            onViewCommunity={navigateToCommunity}
+          />
+        )}
         {activeTab === 'matching' && (
           <LifestyleReportScreen onStartInput={() => setShowLifestyleInput(true)} />
         )}
@@ -71,21 +104,27 @@ export default function App() {
         {activeTab === 'community' && <CommunityScreen />}
         {activeTab === 'mypage' && <MyPageScreen onSettingsClick={() => setShowSettings(true)} />}
 
-        <HousingBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+        <HousingBottomNav activeTab={activeTab} setActiveTab={handleTabChange} />
       </>
     );
   };
 
   return (
     <LanguageProvider>
-      <div className="bg-background min-h-screen">
-        <div className="block md:hidden">{renderMobileContent()}</div>
+      <UserProvider>
+        <MarketProvider>
+          <CommunityProvider>
+            <div className="bg-background min-h-screen">
+              <div className="block md:hidden">{renderMobileContent()}</div>
 
-        <div className="hidden md:block">
-          <DesktopNav activeTab={activeTab} onTabChange={setActiveTab} />
-          {renderDesktopContent()}
-        </div>
-      </div>
+              <div className="hidden md:block">
+                <DesktopNav activeTab={activeTab} onTabChange={handleTabChange} />
+                {renderDesktopContent()}
+              </div>
+            </div>
+          </CommunityProvider>
+        </MarketProvider>
+      </UserProvider>
     </LanguageProvider>
   );
 }

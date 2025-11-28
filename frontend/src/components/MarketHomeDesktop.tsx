@@ -20,7 +20,7 @@ export function MarketHomeDesktop({ onProductClick }: MarketHomeDesktopProps) {
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen">
-      <div className="w-full max-w-[1440px] mx-auto px-8 py-8">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 py-8">
         <div className="flex gap-8">
           {/* Left Sidebar - Filters */}
           <aside className="w-[250px] flex-shrink-0">
@@ -180,7 +180,7 @@ export function MarketHomeDesktop({ onProductClick }: MarketHomeDesktopProps) {
 
                     {/* Join Button */}
                     <button className="w-full bg-gradient-to-r from-secondary to-emerald-500 text-white text-sm py-2.5 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2 group-hover:scale-105">
-                      {language === 'ko' ? '딜 참여' : 'Join Deal'}
+                      {language === 'ko' ? '참여하기' : 'Join Deal'}
                       <ChevronRight className="w-4 h-4" />
                     </button>
                   </div>

@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { Sparkles, ChevronRight, Moon, Volume2, Users, BookOpen, Coffee, Heart, Edit3, TrendingUp, Award } from 'lucide-react';
+import { Sparkles, Moon, Volume2, Users, BookOpen, Coffee, Heart, Edit3, TrendingUp, Award } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'motion/react';
+import { useUser } from '../hooks/useUser';
 
 interface LifestyleReportScreenProps {
   onStartInput: () => void;
@@ -22,21 +22,19 @@ interface LifestyleProfile {
 }
 
 export function LifestyleReportScreen({ onStartInput }: LifestyleReportScreenProps) {
-  const { t, language } = useLanguage();
-  
-  // Mock data - 실제로는 상태나 API에서 가져올 데이터
+  const { language } = useLanguage();
+  const { user } = useUser();
+
   const myProfile: LifestyleProfile = {
     name: language === 'ko' ? '나' : 'Me',
     avatar: '👤',
-    overall: 8.2,
-    categories: {
-      sleep: 9,
-      cleanliness: 8,
-      noise: 8,
-      social: 7,
-      study: 9,
-      sharing: 8,
-    },
+    overall: Number(
+      (
+        Object.values(user.lifestyle).reduce((acc, value) => acc + value, 0) /
+        Object.values(user.lifestyle).length
+      ).toFixed(1),
+    ),
+    categories: { ...user.lifestyle },
   };
 
   const roommateProfile: LifestyleProfile = {
@@ -53,16 +51,14 @@ export function LifestyleReportScreen({ onStartInput }: LifestyleReportScreenPro
     },
   };
 
-  const calculateMatchRate = (profile1: LifestyleProfile, profile2: LifestyleProfile) => {
-    const categories = Object.keys(profile1.categories) as Array<keyof typeof profile1.categories>;
-    const differences = categories.map(key => 
-      Math.abs(profile1.categories[key] - profile2.categories[key])
-    );
+  const calculateMatchRate = (profile1: LifestyleProfile['categories'], profile2: LifestyleProfile['categories']) => {
+    const categories = Object.keys(profile1) as Array<keyof LifestyleProfile['categories']>;
+    const differences = categories.map((key) => Math.abs(profile1[key] - profile2[key]));
     const avgDifference = differences.reduce((a, b) => a + b, 0) / differences.length;
-    return Math.round((10 - avgDifference) * 10);
+    return Math.max(0, Math.min(100, Math.round((10 - avgDifference) * 10)));
   };
 
-  const matchRate = calculateMatchRate(myProfile, roommateProfile);
+  const matchRate = calculateMatchRate(myProfile.categories, roommateProfile.categories);
 
   const categoryInfo = [
     { 

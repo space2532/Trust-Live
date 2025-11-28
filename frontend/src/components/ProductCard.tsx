@@ -12,11 +12,11 @@ interface ProductCardProps {
 export function ProductCard({ title, price, image, seller, condition }: ProductCardProps) {
   return (
     <div className="bg-white rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden">
-      <div className="relative">
+      <div className="relative aspect-square">
         <ImageWithFallback 
           src={image} 
           alt={title}
-          className="w-full h-40 object-cover"
+          className="w-full h-full object-cover"
         />
         <button className="absolute top-3 right-3 p-2 bg-white rounded-full shadow-md hover:bg-secondary hover:text-secondary-foreground transition-all">
           <Heart className="w-4 h-4" />

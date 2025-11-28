@@ -91,7 +91,7 @@ export function ProductDetailDesktop({ onBack }: ProductDetailDesktopProps) {
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen">
       {/* Back Button */}
-      <div className="w-full max-w-[1440px] mx-auto px-8 py-6">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 py-6">
         <button
           onClick={onBack}
           className="flex items-center gap-2 text-foreground hover:text-primary transition-colors group"
@@ -102,7 +102,7 @@ export function ProductDetailDesktop({ onBack }: ProductDetailDesktopProps) {
       </div>
 
       {/* Main 2-Column Layout */}
-      <div className="w-full max-w-[1440px] mx-auto px-8 pb-40">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 pb-40">
         <div className="grid grid-cols-2 gap-12">
           {/* Left Column - Visuals */}
           <div className="space-y-6">
@@ -312,7 +312,7 @@ export function ProductDetailDesktop({ onBack }: ProductDetailDesktopProps) {
 
       {/* Fixed Action Bar */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t-2 border-primary/20 shadow-2xl z-50">
-        <div className="max-w-[1440px] mx-auto px-8 py-6">
+        <div className="max-w-[1440px] min-w-[1024px] mx-auto px-8 py-6">
           <div className="flex items-center justify-between gap-8">
             {/* Quantity Selector */}
             <div className="flex items-center gap-4">

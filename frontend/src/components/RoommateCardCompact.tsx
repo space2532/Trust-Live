@@ -16,11 +16,13 @@ export function RoommateCardCompact({ name, avatar, matchPercentage, status = 'A
       {/* Header with Profile */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <ImageWithFallback 
-            src={avatar}
-            alt={name}
-            className="w-10 h-10 rounded-full object-cover"
-          />
+          <div className="relative w-10 aspect-square">
+            <ImageWithFallback 
+              src={avatar}
+              alt={name}
+              className="w-full h-full rounded-full object-cover"
+            />
+          </div>
           <p className="text-sm text-foreground">{name}</p>
         </div>
         <MatchCircle percentage={matchPercentage} size="small" />

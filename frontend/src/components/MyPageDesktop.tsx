@@ -26,7 +26,7 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen pt-24">
-      <div className="w-full max-w-[1440px] mx-auto px-8 pb-12">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 pb-12">
         <div className="grid grid-cols-12 gap-8">
           {/* Left Column - Profile */}
           <div className="col-span-4 space-y-6">

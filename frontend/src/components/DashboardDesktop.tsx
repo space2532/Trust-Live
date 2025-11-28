@@ -5,7 +5,13 @@ import { RoommateCardCompact } from './RoommateCardCompact';
 import { useDashboardLogic } from '../hooks/useDashboardLogic';
 import { useUser } from '../hooks/useUser';
 
-export function DashboardDesktop() {
+interface DashboardDesktopProps {
+  onViewAllDeals: () => void;
+  onJoinDeal: () => void;
+  onViewCommunity: () => void;
+}
+
+export function DashboardDesktop({ onViewAllDeals, onJoinDeal, onViewCommunity }: DashboardDesktopProps) {
   const {
     t,
     language,
@@ -19,7 +25,7 @@ export function DashboardDesktop() {
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen">
-      <div className="w-full max-w-[1440px] mx-auto px-8 py-8">
+      <div className="w-full max-w-[1440px] min-w-[1024px] mx-auto px-8 py-8">
         <div className="grid grid-cols-12 gap-8">
           {/* Left Column - Profile & Roommate */}
           <div className="col-span-4 space-y-6">
@@ -83,8 +89,8 @@ export function DashboardDesktop() {
                       key={roommate.id}
                       onClick={() => setSelectedRoommateId(roommate.id)}
                       className={`relative transition-all ${
-                        selectedRoommateId === roommate.id 
-                          ? 'ring-2 ring-primary ring-offset-2' 
+                        selectedRoommateId === roommate.id
+                          ? ''
                           : 'opacity-50 hover:opacity-100'
                       }`}
                     >
@@ -138,7 +144,10 @@ export function DashboardDesktop() {
             <div>
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-foreground">{t('dashboard.nearbyDeals')}</h2>
-                <button className="text-primary hover:underline flex items-center gap-2">
+                <button
+                  className="text-primary hover:underline flex items-center gap-2"
+                  onClick={onViewAllDeals}
+                >
                   {t('dashboard.seeAll')}
                   <ArrowRight className="w-4 h-4" />
                 </button>
@@ -158,7 +167,7 @@ export function DashboardDesktop() {
                       <ImageWithFallback
                         src={deal.image}
                         alt={deal.name}
-                        className="w-full h-48 object-cover"
+                        className="w-full h-40 object-cover"
                       />
                       <div className="absolute top-3 left-3 bg-gradient-to-r from-red-500 to-orange-500 text-white px-3 py-1.5 rounded-full text-xs">
                         {deal.discount}% OFF
@@ -196,7 +205,10 @@ export function DashboardDesktop() {
                         </div>
                       </div>
 
-                      <button className="w-full bg-gradient-to-r from-secondary to-emerald-400 text-white py-2.5 rounded-xl text-sm hover:shadow-lg transition-all">
+                      <button
+                        className="w-full bg-gradient-to-r from-secondary to-emerald-400 text-white py-2.5 rounded-xl text-sm hover:shadow-lg transition-all"
+                        onClick={onJoinDeal}
+                      >
                         {t('dashboard.joinDeal')}
                       </button>
                     </div>
@@ -216,7 +228,10 @@ export function DashboardDesktop() {
         >
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-foreground">{language === 'ko' ? '커뮤니티 피드' : 'Community Feed'}</h2>
-            <button className="text-primary hover:underline flex items-center gap-2">
+            <button
+              className="text-primary hover:underline flex items-center gap-2"
+              onClick={onViewCommunity}
+            >
               {language === 'ko' ? '더보기' : 'See All'}
               <ArrowRight className="w-4 h-4" />
             </button>
@@ -232,11 +247,13 @@ export function DashboardDesktop() {
                 className="bg-white rounded-2xl shadow-lg border border-border p-6 hover:shadow-xl transition-all cursor-pointer"
               >
                 <div className="flex items-center gap-3 mb-4">
-                  <ImageWithFallback
-                    src={post.author.avatar}
-                    alt={post.author.name}
-                    className="w-12 h-12 rounded-full object-cover"
-                  />
+                  <div className="relative w-12 aspect-square">
+                    <ImageWithFallback
+                      src={post.author.avatar}
+                      alt={post.author.name}
+                      className="w-full h-full rounded-full object-cover"
+                    />
+                  </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-foreground truncate">{post.author.name}</p>
                     <p className="text-xs text-muted-foreground">{post.timeAgo}</p>

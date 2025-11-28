@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Sparkles, ChevronRight, Moon, Sun, Volume2, Users, BookOpen, Home, Utensils, Coffee, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
+import { useUser } from '../hooks/useUser';
 import { motion } from 'motion/react';
 
 interface LifestyleQuestion {
@@ -17,9 +18,19 @@ interface LifestyleInputScreenProps {
 
 export function LifestyleInputScreen({ onBack }: LifestyleInputScreenProps) {
   const { t, language } = useLanguage();
+  const { updateLifestyle } = useUser();
   const [currentStep, setCurrentStep] = useState(0);
   const [answers, setAnswers] = useState<Record<string, number>>({});
   const [showResults, setShowResults] = useState(false);
+
+  const mapAnswersToLifestyle = (data: Record<string, number>) => ({
+    sleep: data.sleep ?? 5,
+    cleanliness: data.cleanliness ?? 5,
+    noise: data.noise ?? 5,
+    social: data.social ?? 5,
+    study: data.study ?? 5,
+    sharing: data.sharing ?? 5,
+  });
 
   const questions: LifestyleQuestion[] = [
     {
@@ -91,7 +102,8 @@ export function LifestyleInputScreen({ onBack }: LifestyleInputScreenProps) {
   ];
 
   const handleAnswer = (questionId: string, value: number) => {
-    setAnswers({ ...answers, [questionId]: value });
+    const nextAnswers = { ...answers, [questionId]: value };
+    setAnswers(nextAnswers);
     
     if (currentStep < questions.length - 1) {
       setTimeout(() => {
@@ -99,6 +111,7 @@ export function LifestyleInputScreen({ onBack }: LifestyleInputScreenProps) {
       }, 300);
     } else {
       setTimeout(() => {
+        updateLifestyle(mapAnswersToLifestyle(nextAnswers));
         setShowResults(true);
       }, 300);
     }
