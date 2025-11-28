@@ -7,6 +7,7 @@ import { AchievementBadges } from './AchievementBadges';
 import { LifestyleDNACard } from './LifestyleDNACard';
 import { OrderHistory } from './OrderHistory';
 import { MenuOptions } from './MenuOptions';
+import { useUser } from '../hooks/useUser';
 
 interface MyPageDesktopProps {
   onSettingsClick: () => void;
@@ -14,6 +15,14 @@ interface MyPageDesktopProps {
 
 export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
   const { language, t } = useLanguage();
+  const { user } = useUser();
+  const englishYearLabels: Record<number, string> = {
+    1: 'Freshman',
+    2: 'Sophomore',
+    3: 'Junior',
+    4: 'Senior',
+  };
+  const yearLabel = language === 'ko' ? `${user.year}학년` : englishYearLabels[user.year] ?? 'Student';
 
   return (
     <div className="bg-gradient-to-br from-blue-50 via-white to-emerald-50 min-h-screen pt-24">
@@ -36,8 +45,8 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
                 {/* Avatar */}
                 <div className="relative">
                   <ImageWithFallback
-                    src="https://images.unsplash.com/photo-1639654655546-68bc1f21e9e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2xsZWdlJTIwc3R1ZGVudCUyMHBvcnRyYWl0fGVufDF8fHx8MTc2NDAyMzc3MHww&ixlib=rb-4.1.0&q=80&w=200"
-                    alt="Alex Kim"
+                    src={user.avatar}
+                    alt={user.name}
                     className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg"
                   />
                   <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-secondary rounded-full border-2 border-white flex items-center justify-center">
@@ -47,7 +56,7 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
 
                 {/* User Info */}
                 <div className="flex-1">
-                  <h2 className="text-foreground mb-2">{language === 'ko' ? '알렉스 김' : 'Alex Kim'}</h2>
+                  <h2 className="text-foreground mb-2">{user.name}</h2>
                   
                   {/* Verified Badge */}
                   <div className="inline-flex items-center gap-1 bg-primary text-primary-foreground px-3 py-1 rounded-full mb-3">
@@ -56,8 +65,8 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
                   </div>
                   
                   <div className="space-y-0.5">
-                    <p className="text-sm text-foreground">{language === 'ko' ? '주립대학교' : 'State University'}</p>
-                    <p className="text-xs text-muted-foreground">{language === 'ko' ? '컴퓨터공학 • 3학년' : 'Computer Science • Junior'}</p>
+                    <p className="text-sm text-foreground">{user.university}</p>
+                    <p className="text-xs text-muted-foreground">{`${user.major} • ${yearLabel}`}</p>
                   </div>
                 </div>
               </div>
@@ -65,15 +74,17 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-3 bg-white/60 backdrop-blur rounded-2xl p-4">
                 <div className="text-center">
-                  <p className="text-2xl text-primary">98</p>
+                  <p className="text-2xl text-primary">{user.trustScore}</p>
                   <p className="text-xs text-muted-foreground">{language === 'ko' ? '신뢰점수' : 'Trust Score'}</p>
                 </div>
                 <div className="text-center border-l border-r border-border">
-                  <p className="text-2xl text-secondary">12</p>
+                  <p className="text-2xl text-secondary">{user.dealsJoined}</p>
                   <p className="text-xs text-muted-foreground">{language === 'ko' ? '참여딜' : 'Deals Joined'}</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl text-foreground">6 {language === 'ko' ? '개월' : 'mo'}</p>
+                  <p className="text-2xl text-foreground">
+                    {user.membershipMonths} {language === 'ko' ? '개월' : 'mo'}
+                  </p>
                   <p className="text-xs text-muted-foreground">{language === 'ko' ? '회원' : 'Member'}</p>
                 </div>
               </div>
@@ -103,7 +114,7 @@ export function MyPageDesktop({ onSettingsClick }: MyPageDesktopProps) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1 }}
             >
-              <TrustScoreCard score={98} maxScore={100} />
+              <TrustScoreCard score={user.trustScore} maxScore={100} />
             </motion.div>
 
             {/* Achievement Badges */}

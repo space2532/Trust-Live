@@ -1,119 +1,13 @@
-import { useState } from 'react';
 import { Search, MapPin, Clock, Users, ChevronRight, Flame } from 'lucide-react';
-import { useLanguage } from '../contexts/LanguageContext';
 import { motion } from 'motion/react';
-
-interface GroupBuyDeal {
-  id: string;
-  image: string;
-  name: string;
-  location: string;
-  originalPrice: number;
-  discountedPrice: number;
-  discount: number;
-  currentParticipants: number;
-  targetParticipants: number;
-  timeLeft: string;
-  isHot: boolean;
-}
+import { useMarket } from '../hooks/useMarket';
 
 interface MarketHomeScreenProps {
   onProductClick: () => void;
 }
 
 export function MarketHomeScreen({ onProductClick }: MarketHomeScreenProps) {
-  const { language } = useLanguage();
-  const [selectedCategory, setSelectedCategory] = useState('all');
-
-  const categories = [
-    { id: 'all', label: language === 'ko' ? '전체' : 'All' },
-    { id: 'groceries', label: language === 'ko' ? '식료품' : 'Groceries' },
-    { id: 'snacks', label: language === 'ko' ? '간식' : 'Snacks' },
-    { id: 'dorm', label: language === 'ko' ? '생활용품' : 'Dorm Essentials' },
-    { id: 'electronics', label: language === 'ko' ? '전자기기' : 'Electronics' },
-    { id: 'books', label: language === 'ko' ? '교재' : 'Books' },
-  ];
-
-  const deals: GroupBuyDeal[] = [
-    {
-      id: '1',
-      image: 'https://images.unsplash.com/photo-1565151448704-33d96c51fff0?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-      name: language === 'ko' ? '제주 천연 미네랄워터 (20병)' : 'Jeju Natural Water (20 bottles)',
-      location: language === 'ko' ? 'A동 로비' : 'Dorm A Lobby',
-      originalPrice: 20000,
-      discountedPrice: 14000,
-      discount: 30,
-      currentParticipants: 3,
-      targetParticipants: 5,
-      timeLeft: '2h 15m',
-      isHot: true,
-    },
-    {
-      id: '2',
-      image: 'https://images.unsplash.com/photo-1599490659213-e2b9527bd087?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-      name: language === 'ko' ? '인기 과자 믹스팩 (15개입)' : 'Popular Snack Mix Pack (15pcs)',
-      location: language === 'ko' ? 'B동 로비' : 'Dorm B Lobby',
-      originalPrice: 18000,
-      discountedPrice: 12600,
-      discount: 30,
-      currentParticipants: 4,
-      targetParticipants: 6,
-      timeLeft: '5h 30m',
-      isHot: true,
-    },
-    {
-      id: '3',
-      image: 'https://images.unsplash.com/photo-1584949091598-c31daaaa4aa9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-      name: language === 'ko' ? '세탁세제 리필 (3개)' : 'Laundry Detergent Refill (3pcs)',
-      location: language === 'ko' ? 'A동 로비' : 'Dorm A Lobby',
-      originalPrice: 25000,
-      discountedPrice: 18750,
-      discount: 25,
-      currentParticipants: 2,
-      targetParticipants: 4,
-      timeLeft: '1h 45m',
-      isHot: false,
-    },
-    {
-      id: '4',
-      image: 'https://images.unsplash.com/photo-1571091718767-18b5b1457add?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-      name: language === 'ko' ? '신선 과일 박스 (혼합)' : 'Fresh Fruit Box (Mixed)',
-      location: language === 'ko' ? 'C동 로비' : 'Dorm C Lobby',
-      originalPrice: 30000,
-      discountedPrice: 21000,
-      discount: 30,
-      currentParticipants: 5,
-      targetParticipants: 8,
-      timeLeft: '8h 20m',
-      isHot: false,
-    },
-    {
-      id: '5',
-      image: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-      name: language === 'ko' ? '노트북 스탠드 (접이식)' : 'Laptop Stand (Foldable)',
-      location: language === 'ko' ? 'B동 로비' : 'Dorm B Lobby',
-      originalPrice: 35000,
-      discountedPrice: 24500,
-      discount: 30,
-      currentParticipants: 3,
-      targetParticipants: 5,
-      timeLeft: '3h 10m',
-      isHot: true,
-    },
-    {
-      id: '6',
-      image: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=400',
-      name: language === 'ko' ? '경제학 원론 교재' : 'Economics Principles Textbook',
-      location: language === 'ko' ? 'A동 로비' : 'Dorm A Lobby',
-      originalPrice: 40000,
-      discountedPrice: 28000,
-      discount: 30,
-      currentParticipants: 6,
-      targetParticipants: 10,
-      timeLeft: '12h 5m',
-      isHot: false,
-    },
-  ];
+  const { language, categories, displayedProducts, selectedCategory, selectCategory } = useMarket();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-emerald-50">
@@ -132,7 +26,7 @@ export function MarketHomeScreen({ onProductClick }: MarketHomeScreenProps) {
             {categories.map((category) => (
               <button
                 key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => selectCategory(category.id)}
                 className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-all flex-shrink-0 ${
                   selectedCategory === category.id
                     ? 'bg-gradient-to-r from-primary to-secondary text-white shadow-md'
@@ -149,7 +43,7 @@ export function MarketHomeScreen({ onProductClick }: MarketHomeScreenProps) {
       {/* Group Buy Feed */}
       <main className="px-4 py-6 max-w-md mx-auto pb-24">
         <div className="space-y-4">
-          {deals.map((deal, index) => (
+          {displayedProducts.map((deal, index) => (
             <motion.div
               key={deal.id}
               initial={{ opacity: 0, y: 20 }}
@@ -162,7 +56,7 @@ export function MarketHomeScreen({ onProductClick }: MarketHomeScreenProps) {
                 <div className="relative flex-shrink-0 w-28 h-28 rounded-[16px] overflow-hidden">
                   <img 
                     src={deal.image} 
-                    alt={deal.name}
+                    alt={deal.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
                   {/* Discount Badge */}
@@ -176,7 +70,7 @@ export function MarketHomeScreen({ onProductClick }: MarketHomeScreenProps) {
                   {/* Product Name & Location */}
                   <div>
                     <h3 className="text-foreground text-sm mb-1 line-clamp-2 group-hover:text-primary transition-colors">
-                      {deal.name}
+                      {deal.title}
                     </h3>
                     <div className="flex items-center gap-1 mb-2">
                       <MapPin className="w-3 h-3 text-muted-foreground flex-shrink-0" />
@@ -240,7 +134,7 @@ export function MarketHomeScreen({ onProductClick }: MarketHomeScreenProps) {
         </div>
 
         {/* Empty State Message */}
-        {deals.length === 0 && (
+        {displayedProducts.length === 0 && (
           <div className="text-center py-16">
             <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
               <Search className="w-10 h-10 text-muted-foreground" />

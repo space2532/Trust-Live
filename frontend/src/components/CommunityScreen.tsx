@@ -1,98 +1,9 @@
-import { Plus, Heart, MessageCircle, Share2, TrendingUp, Users, Home as HomeIcon, ShoppingCart } from 'lucide-react';
+import { Plus, Heart, MessageCircle, Share2 } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { useLanguage } from '../contexts/LanguageContext';
-
-interface Post {
-  id: number;
-  author: {
-    name: string;
-    avatar: string;
-    verified: boolean;
-  };
-  category: string;
-  title: string;
-  content: string;
-  image?: string;
-  likes: number;
-  comments: number;
-  timeAgo: string;
-  categoryColor: string;
-}
+import { useCommunity } from '../hooks/useCommunity';
 
 export function CommunityScreen() {
-  const posts: Post[] = [
-    {
-      id: 1,
-      author: {
-        name: 'Sarah Kim',
-        avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200',
-        verified: true,
-      },
-      category: 'Roommate Search',
-      title: 'Looking for a clean roommate near campus!',
-      content: 'Hi! I\'m looking for a roommate to share a 2BR apartment starting next month. I\'m a junior majoring in CS, quiet, and very clean. Rent is ₩450,000/month.',
-      likes: 24,
-      comments: 12,
-      timeAgo: '2h ago',
-      categoryColor: 'bg-primary',
-    },
-    {
-      id: 2,
-      author: {
-        name: 'Alex Park',
-        avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200',
-        verified: true,
-      },
-      category: 'Group Buy',
-      title: 'Anyone want to join bulk rice purchase?',
-      content: 'I\'m organizing a group buy for 20kg premium rice bags. If we get 10 people, we can save ₩15,000 each! DM me if interested.',
-      image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800',
-      likes: 45,
-      comments: 28,
-      timeAgo: '5h ago',
-      categoryColor: 'bg-secondary',
-    },
-    {
-      id: 3,
-      author: {
-        name: 'Jamie Lee',
-        avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200',
-        verified: true,
-      },
-      category: 'Housing Tips',
-      title: 'Best neighborhoods for students on a budget',
-      content: 'Just moved and wanted to share some tips! Sinchon area has great deals if you look carefully. Here are my top 3 picks...',
-      likes: 67,
-      comments: 19,
-      timeAgo: '1d ago',
-      categoryColor: 'bg-blue-500',
-    },
-    {
-      id: 4,
-      author: {
-        name: 'Chris Choi',
-        avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200',
-        verified: false,
-      },
-      category: 'Marketplace',
-      title: 'Selling desk and chair - great condition!',
-      content: 'Moving out soon, selling my study desk (₩80,000) and ergonomic chair (₩60,000). Both less than 1 year old. Pickup only.',
-      image: 'https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800',
-      likes: 12,
-      comments: 8,
-      timeAgo: '2d ago',
-      categoryColor: 'bg-orange-500',
-    },
-  ];
-
-  const categories = [
-    { name: 'All', icon: TrendingUp, color: 'text-primary' },
-    { name: 'Roommates', icon: Users, color: 'text-primary' },
-    { name: 'Housing', icon: HomeIcon, color: 'text-blue-500' },
-    { name: 'Marketplace', icon: ShoppingCart, color: 'text-orange-500' },
-  ];
-
-  const { t } = useLanguage();
+  const { t, categories, filteredPosts, selectedCategory, setSelectedCategory } = useCommunity();
 
   return (
     <div className="min-h-screen bg-background">
@@ -110,13 +21,14 @@ export function CommunityScreen() {
       <div className="bg-white border-b border-border sticky top-[72px] z-30">
         <div className="px-4 py-3 max-w-md mx-auto overflow-x-auto">
           <div className="flex gap-2">
-            {categories.map((category, index) => {
+            {categories.map((category) => {
               const Icon = category.icon;
               return (
                 <button
-                  key={index}
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
                   className={`flex items-center gap-2 px-4 py-2 rounded-full border transition-all whitespace-nowrap ${
-                    index === 0
+                    selectedCategory === category.id
                       ? 'bg-primary text-primary-foreground border-primary'
                       : 'bg-white text-foreground border-border hover:bg-muted'
                   }`}
@@ -132,7 +44,7 @@ export function CommunityScreen() {
 
       <main className="pt-4 px-4 max-w-md mx-auto space-y-4 pb-24">
         {/* Posts */}
-        {posts.map((post) => (
+        {filteredPosts.map((post) => (
           <div
             key={post.id}
             className="bg-white rounded-[20px] shadow-[0_2px_8px_rgba(0,0,0,0.08)] overflow-hidden hover:shadow-[0_4px_12px_rgba(0,0,0,0.12)] transition-shadow"

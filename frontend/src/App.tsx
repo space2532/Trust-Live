@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { DashboardScreen } from './components/DashboardScreen';
 import { LifestyleReportScreen } from './components/LifestyleReportScreen';
 import { LifestyleInputScreen } from './components/LifestyleInputScreen';
@@ -22,63 +22,69 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showLifestyleInput, setShowLifestyleInput] = useState(false);
   const [showProductDetail, setShowProductDetail] = useState(false);
-  const [isDesktopMode, setIsDesktopMode] = useState(window.innerWidth >= 1024);
+  const renderDesktopContent = () => {
+    if (showSettings) {
+      return <SettingsScreen onBack={() => setShowSettings(false)} />;
+    }
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsDesktopMode(window.innerWidth >= 1024);
-    };
+    if (showLifestyleInput) {
+      return <LifestyleInputScreen onBack={() => setShowLifestyleInput(false)} />;
+    }
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+    if (showProductDetail) {
+      return <ProductDetailDesktop onBack={() => setShowProductDetail(false)} />;
+    }
+
+    return (
+      <>
+        {activeTab === 'home' && <DashboardDesktop />}
+        {activeTab === 'matching' && (
+          <LifestyleReportDesktop onStartInput={() => setShowLifestyleInput(true)} />
+        )}
+        {activeTab === 'market' && <MarketHomeDesktop onProductClick={() => setShowProductDetail(true)} />}
+        {activeTab === 'community' && <CommunityDesktop />}
+        {activeTab === 'mypage' && <MyPageDesktop onSettingsClick={() => setShowSettings(true)} />}
+      </>
+    );
+  };
+
+  const renderMobileContent = () => {
+    if (showSettings) {
+      return <SettingsScreen onBack={() => setShowSettings(false)} />;
+    }
+
+    if (showLifestyleInput) {
+      return <LifestyleInputScreen onBack={() => setShowLifestyleInput(false)} />;
+    }
+
+    if (showProductDetail) {
+      return <ProductDetailScreen onBack={() => setShowProductDetail(false)} />;
+    }
+
+    return (
+      <>
+        {activeTab === 'home' && <DashboardScreen />}
+        {activeTab === 'matching' && (
+          <LifestyleReportScreen onStartInput={() => setShowLifestyleInput(true)} />
+        )}
+        {activeTab === 'market' && <MarketHomeScreen onProductClick={() => setShowProductDetail(true)} />}
+        {activeTab === 'community' && <CommunityScreen />}
+        {activeTab === 'mypage' && <MyPageScreen onSettingsClick={() => setShowSettings(true)} />}
+
+        <HousingBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+      </>
+    );
+  };
 
   return (
     <LanguageProvider>
-      <div className="min-h-screen bg-background">
-        {/* Desktop Mode */}
-        {isDesktopMode ? (
-          <>
-            <DesktopNav activeTab={activeTab} onTabChange={setActiveTab} />
-            {showSettings ? (
-              <SettingsScreen onBack={() => setShowSettings(false)} />
-            ) : showLifestyleInput ? (
-              <LifestyleInputScreen onBack={() => setShowLifestyleInput(false)} />
-            ) : showProductDetail ? (
-              <ProductDetailDesktop onBack={() => setShowProductDetail(false)} />
-            ) : (
-              <>
-                {activeTab === 'home' && <DashboardDesktop />}
-                {activeTab === 'matching' && <LifestyleReportDesktop onStartInput={() => setShowLifestyleInput(true)} />}
-                {activeTab === 'market' && <MarketHomeDesktop onProductClick={() => setShowProductDetail(true)} />}
-                {activeTab === 'community' && <CommunityDesktop />}
-                {activeTab === 'mypage' && <MyPageDesktop onSettingsClick={() => setShowSettings(true)} />}
-              </>
-            )}
-          </>
-        ) : (
-          /* Mobile Mode */
-          <>
-            {showSettings ? (
-              <SettingsScreen onBack={() => setShowSettings(false)} />
-            ) : showLifestyleInput ? (
-              <LifestyleInputScreen onBack={() => setShowLifestyleInput(false)} />
-            ) : showProductDetail ? (
-              <ProductDetailScreen onBack={() => setShowProductDetail(false)} />
-            ) : (
-              <>
-                {activeTab === 'home' && <DashboardScreen />}
-                {activeTab === 'matching' && <LifestyleReportScreen onStartInput={() => setShowLifestyleInput(true)} />}
-                {activeTab === 'market' && <MarketHomeScreen onProductClick={() => setShowProductDetail(true)} />}
-                {activeTab === 'community' && <CommunityScreen />}
-                {activeTab === 'mypage' && <MyPageScreen onSettingsClick={() => setShowSettings(true)} />}
+      <div className="bg-background min-h-screen">
+        <div className="block lg:hidden">{renderMobileContent()}</div>
 
-                {/* Bottom Navigation */}
-                <HousingBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
-              </>
-            )}
-          </>
-        )}
+        <div className="hidden lg:block">
+          <DesktopNav activeTab={activeTab} onTabChange={setActiveTab} />
+          {renderDesktopContent()}
+        </div>
       </div>
     </LanguageProvider>
   );
